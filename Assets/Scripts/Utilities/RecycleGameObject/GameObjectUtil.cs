@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SO_Scripts.Managers;
 using UnityEngine;
 
 namespace Utilities.RecycleGameObject {
@@ -41,6 +42,11 @@ namespace Utilities.RecycleGameObject {
             }
             else {
                 var poolContainer = new GameObject(reference.gameObject.name + "ObjectPool");
+                
+                if (reference.gameObject.tag == "Drop") {
+                    poolContainer.transform.parent = MasterManager.boardManager._originPoint.transform;
+                }
+                
                 pool = poolContainer.AddComponent<ObjectPool>();
                 pool.prefab = reference;
                 pools.Add(reference, pool);
