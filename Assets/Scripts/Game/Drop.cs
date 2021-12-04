@@ -21,6 +21,11 @@ namespace Game {
             _mySpriteRenderer.sprite = MasterManager.dropSprites[(int) color];
             
         }
+        
+        public void MoveTo(Tile target) {
+            target.drop = this;
+            transform.localPosition = target.transform.localPosition;
+        }
     
     }
 
