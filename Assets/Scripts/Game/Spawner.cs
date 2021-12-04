@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Utilities;
 using Game;
+using SO_Scripts.Managers;
 using Utilities.RecycleGameObject;
 
 public class Spawner : MonoBehaviour {
@@ -19,7 +20,7 @@ public class Spawner : MonoBehaviour {
     public void AddTile(Tile tile) {
         myColumnTiles.Add(tile);
         //after every adding ordering coordinate y values
-        myColumnTiles.OrderBy(x=>x.coordinate.y).ToList();
+        myColumnTiles.OrderByDescending(x=>x.coordinate.y).ToList();
     }
     
     public void Initialize(int myColumnNo , GameObject dropPrefab) {
@@ -36,13 +37,30 @@ public class Spawner : MonoBehaviour {
         dropGO.transform.localPosition = transform.position;
         Drop drop = dropGO.GetComponent<Drop>();
         drop.FirstInitialize(GetRandomColor());
-            
+        myColumnTiles[0].drop = drop;
+        FallDrops();
         return drop.GetComponent<Drop>();
+        
     }
 
-    // public FallColumnDropsIfExist() {
-    //     
-    // }
+     public void FallDrops() {
+         int currentIndex = -1;
+         foreach (Tile tile in myColumnTiles) {
+             currentIndex++;
+             int filledCount = 0;
+             int emptyCount = 0;
+             for (int i = currentIndex; i < myColumnTiles.Count-1; i++) {
+                 if (myColumnTiles[i + 1].drop == null) {
+                     emptyCount++;
+                 } else {
+                     filledCount++;
+                 }
+             }
+             
+             tile.drop?.MoveTo(myColumnTiles[currentIndex + emptyCount]);
+             //MasterManager.boardManager.GetTile()
+         }
+     }
     
     
     private Drop.eColor GetRandomColor() {
