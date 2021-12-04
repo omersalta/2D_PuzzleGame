@@ -14,8 +14,69 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnerPrefab: {fileID: 3033657581307122903, guid: c378f89760443e54a9b00d47a897c8fd, type: 3}
   _tilePrefab: {fileID: 4704048850211146529, guid: 13cc6869438716d4ab096fef385a5007, type: 3}
-  _dropPrefabs:
-  - {fileID: 5708822830768344948, guid: 979b290292e20df49a78d7b37603f602, type: 3}
-  - {fileID: 1309698139908141075, guid: 53f24541c2c20a64f9d71399fc90c824, type: 3}
-  - {fileID: 3682805408849043442, guid: f7f7418afb318a347b2209e7d5e909ce, type: 3}
-  - {fileID: 4310060437086984771, guid: 6a4d3513aa4324941a2e1397efcd580c, type: 3}
+  _dropPrefab: {fileID: 1309698139908141075, guid: 53f24541c2c20a64f9d71399fc90c824, type: 3}
+  _drops:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

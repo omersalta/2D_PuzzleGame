@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Game;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using Utilities;
@@ -14,19 +15,27 @@ namespace SO_Scripts.Managers {
         //theese are need to drag and drop from inspector
         [SerializeField] private GameObject _spawnerPrefab;
         [SerializeField] private GameObject _tilePrefab;
-        [SerializeField] private GameObject[] _dropPrefabs;
+        [SerializeField] private GameObject _dropPrefab;
 
         private GameObject _originPoint;
-        private GameObject _content;
+        private GameObject _contentTiles;
+        private GameObject _contentSpawners;
+        
         private static int rowCount = 8;
         private static int columnCount = 8;
         private Vector2 tileAspectLength;
         private List<Spawner> _spawners;
         private List<Tile> _tiles; //indexing  x*ColumnCount + y
+        [SerializeField]
+        private List<Drop> _drops;
         
         public void FirstInitialize() {
+            _drops = new List<Drop>();
             _originPoint = GameObject.FindWithTag("BoardOrigin");
-            _content = _originPoint.transform.GetChild(0).gameObject;
+            /*if you run into a problem when finding content object you can handle with spesified method
+            but not necessery now*/
+            _contentSpawners = _originPoint.transform.GetChild(0).gameObject;
+            _contentTiles = _originPoint.transform.GetChild(1).gameObject;
             tileAspectLength = findAspectLengths(_tilePrefab);
             Debug.Log("this massage will output after awake");
             ResetBoard();
@@ -35,32 +44,36 @@ namespace SO_Scripts.Managers {
 
         void ModifyOriginPosition() {
             //TODO calculate with coding not manuel 
+            //its for showing all tiles on center of camera
             _originPoint.transform.position = new Vector3(-10, -9, 0);
         }
 
         Vector2 findAspectLengths(GameObject tilePrefab) {
+            //its for when creating tiles calculate distance between
             SpriteRenderer renderer = tilePrefab.GetComponent<SpriteRenderer>();
             return new Vector2(renderer.bounds.size.x, renderer.bounds.size.y);
         }
 
         void ResetBoard() {
+            _spawners = PopulateSpawners(columnCount);
             _tiles = PopulateTiles(rowCount, columnCount);
+            PopulateDrops();
         }
 
         List<Tile> PopulateTiles(int rowCount, int columnCount) {
 
             List<Tile> tempList = new List<Tile>();
-            //find content object of board (for adding tiles as child of content)
-            
-            Debug.Log(_content.name);
+
+            Debug.Log(_contentTiles.name);
             //row*column times create tiles
             for (int y = 0; y < rowCount; y++) {
                 for (int x = 0; x < columnCount; x++) {
                     
                     //first rows creating so indexing is Ex.(3,7) = 3*columnCount + 7
-                    Tile tile = CreateTile(x, y, _content);
+                    Tile tile = CreateTile(x, y, _contentTiles);
                     if (tile != null) {
                         tempList.Add(tile);
+                        _spawners[x].AddTile(tile); //assign tile to response spawners
                     } else {
                         Debug.LogWarning("Tile Creating fail");
                     }
@@ -85,21 +98,31 @@ namespace SO_Scripts.Managers {
 
             return tempList;
         }
-
-        Spawner CreateSpawner(int columnNumber) {
-            if (_spawners.Any(x => x.columnNo == columnNumber)) { 
-                //if already exist same columnNo spawner
-                Debug.LogWarning("this columnNumber's Spawner is already exist");
-                return null;
-            } else {
-                //Instantiation
-                GameObject instance;
-                instance = Instantiate(_spawnerPrefab);
-                instance.transform.parent = instance.transform;
-                Spawner spawner = instance.GetComponent<Spawner>();
-                spawner.Initialize(columnNumber);
-                return spawner;
+        
+        Spawner CreateSpawner(int columnNo) {
+            
+            if (_spawners.Any()) {
+                if (false && _spawners.Any(x => x.columnNo == columnNo)) { 
+                    //if already exist same columnNo spawner
+                    Debug.LogWarning("this columnNumber's Spawner is already exist");
+                    return null;
+                }
             }
+            
+            //Instantiation
+            GameObject instance;
+            Vector3 pos = CalculateSpawnerPos(columnNo);
+            instance = Instantiate(_spawnerPrefab,pos,quaternion.identity);
+            instance.transform.parent = _contentSpawners.transform;
+            Spawner spawner = instance.GetComponent<Spawner>();
+            spawner.Initialize(columnNo, _dropPrefab);
+            return spawner;
+            
+        }
+
+        Vector3 CalculateSpawnerPos(int columnNo) {
+            Vector2 t = tileAspectLength;
+            return _originPoint.transform.position + new Vector3(t.x * columnNo, rowCount*t.y, 0);
         }
 
         Tile CreateTile(int x, int y, GameObject content) {
@@ -108,6 +131,16 @@ namespace SO_Scripts.Managers {
             instance.transform.parent = content.transform;
             return instance.GetComponent<Tile>();
         }
+        
+        void PopulateDrops () {
+            //this method sould call only when reset board
+            foreach (var spawner in _spawners) {
+                for (int i = 0; i < spawner.GetCurrentTileCount(); i++) {
+                    _drops.Add(spawner.CreateDrop());
+                }
+            }
+        }
+        
 
         Vector3 CalculatePosition(int x, int y) {
             return new Vector3(tileAspectLength.x * x, tileAspectLength.y * y, 0);
@@ -117,7 +150,6 @@ namespace SO_Scripts.Managers {
             return _tiles[x * columnCount + y];
         }
         
-
     }
 
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
@@ -12,6 +13,9 @@ namespace SO_Scripts.Managers {
         
          [SerializeField] private BoardManager _boardManager;
          public static BoardManager boardManager { get => Instance._boardManager; }
+         
+         [SerializeField] private List<Sprite> _dropSprites;
+         public static List<Sprite> dropSprites { get => Instance._dropSprites; }
          
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
