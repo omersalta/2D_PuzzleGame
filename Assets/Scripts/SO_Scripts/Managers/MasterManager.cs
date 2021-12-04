@@ -10,10 +10,8 @@ namespace SO_Scripts.Managers {
         // this master manager script is must customize for your project specialy and use it 
         // your prefered, it should give easy reacing to your singletons referance.
         
-        [SerializeField] private GameObject _gameSettings;
-        public static GameObject gameSettings { get => Instance._gameSettings; }
-        
-
+        // [SerializeField] private BoardManager _boardManager;
+        // public static BoardManager boardManager { get => Instance._boardManager; }
         
         
 
