@@ -28,6 +28,9 @@
         <e p="Scripts" t="Include">
           <e p="Game" t="Include">
             <e p="Drop.cs" t="Include" />
+            <e p="GameManager.cs" t="Include" />
+            <e p="InputState.cs" t="Include" />
+            <e p="Picker.cs" t="Include" />
             <e p="Spawner.cs" t="Include" />
             <e p="Tile.cs" t="Include" />
           </e>
