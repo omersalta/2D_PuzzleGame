@@ -17,7 +17,7 @@ namespace SO_Scripts.Managers {
         [SerializeField] private GameObject _tilePrefab;
         [SerializeField] private GameObject _dropPrefab;
 
-        private GameObject _originPoint;
+        public GameObject _originPoint { get; private set; }
         private GameObject _contentTiles;
         private GameObject _contentSpawners;
         
@@ -26,18 +26,16 @@ namespace SO_Scripts.Managers {
         private Vector2 tileAspectLength;
         private List<Spawner> _spawners;
         private List<Tile> _tiles; //indexing  x*ColumnCount + y
-        [SerializeField]
-        private List<Drop> _drops;
         
         public void FirstInitialize() {
-            _drops = new List<Drop>();
+            
             _originPoint = GameObject.FindWithTag("BoardOrigin");
             /*if you run into a problem when finding content object you can handle with spesified method
             but not necessery now*/
             _contentSpawners = _originPoint.transform.GetChild(0).gameObject;
             _contentTiles = _originPoint.transform.GetChild(1).gameObject;
             tileAspectLength = findAspectLengths(_tilePrefab);
-            Debug.Log("this massage will output after awake");
+            //Debug.Log("this massage will output after awake");
             ResetBoard();
             ModifyOriginPosition();
         }
@@ -45,26 +43,28 @@ namespace SO_Scripts.Managers {
         void ModifyOriginPosition() {
             //TODO calculate with coding not manuel 
             //its for showing all tiles on center of camera
-            _originPoint.transform.position = new Vector3(-10, -9, 0);
+            //ORIGINAL.... _originPoint.transform.localPosition = new Vector3(-10, -9, 0);
+            //TESTİNG.....
+            _originPoint.transform.localPosition = new Vector3(100, -9, 0);
         }
 
         Vector2 findAspectLengths(GameObject tilePrefab) {
+            //its return prefab of tile's width and height values
             //its for when creating tiles calculate distance between
             SpriteRenderer renderer = tilePrefab.GetComponent<SpriteRenderer>();
             return new Vector2(renderer.bounds.size.x, renderer.bounds.size.y);
         }
 
         void ResetBoard() {
-            _spawners = PopulateSpawners(columnCount);
-            _tiles = PopulateTiles(rowCount, columnCount);
+            PopulateSpawners(columnCount);
+            PopulateTiles(rowCount, columnCount);
             PopulateDrops();
         }
 
-        List<Tile> PopulateTiles(int rowCount, int columnCount) {
+       void PopulateTiles(int rowCount, int columnCount) {
 
-            List<Tile> tempList = new List<Tile>();
-
-            Debug.Log(_contentTiles.name);
+            _tiles = new List<Tile>();
+            
             //row*column times create tiles
             for (int y = 0; y < rowCount; y++) {
                 for (int x = 0; x < columnCount; x++) {
@@ -72,7 +72,7 @@ namespace SO_Scripts.Managers {
                     //first rows creating so indexing is Ex.(3,7) = 3*columnCount + 7
                     Tile tile = CreateTile(x, y, _contentTiles);
                     if (tile != null) {
-                        tempList.Add(tile);
+                        _tiles.Add(tile);
                         _spawners[x].AddTile(tile); //assign tile to response spawners
                     } else {
                         Debug.LogWarning("Tile Creating fail");
@@ -81,33 +81,33 @@ namespace SO_Scripts.Managers {
                 }
             }
 
-            if (tempList.Contains(null)) {
+            if (_tiles.Contains(null)) {
                 Debug.LogWarning("Tile Board fail");
             }
-
-            return tempList;
+            
         }
 
-        List<Spawner> PopulateSpawners(int columnCount) {
+        void PopulateSpawners(int columnCount) {
             
-            List<Spawner> tempList = new List<Spawner>();
+            _spawners = new List<Spawner>();
             
             for (int i = 0; i < columnCount; i++) {
-                tempList.Add(CreateSpawner(i));
+                _spawners.Add(CreateSpawner(i));
             }
-
-            return tempList;
+            
         }
         
         Spawner CreateSpawner(int columnNo) {
             
-            if (_spawners.Any()) {
-                if (false && _spawners.Any(x => x.columnNo == columnNo)) { 
+            if (_spawners.Count > 0) {
+                if (_spawners.Any(x => x.columnNo == columnNo)) { 
                     //if already exist same columnNo spawner
                     Debug.LogWarning("this columnNumber's Spawner is already exist");
                     return null;
                 }
             }
+            
+            //Debug.Log("spawner added to "+columnNo);
             
             //Instantiation
             GameObject instance;
@@ -119,35 +119,47 @@ namespace SO_Scripts.Managers {
             return spawner;
             
         }
-
+        
         Vector3 CalculateSpawnerPos(int columnNo) {
             Vector2 t = tileAspectLength;
             return _originPoint.transform.position + new Vector3(t.x * columnNo, rowCount*t.y, 0);
         }
 
         Tile CreateTile(int x, int y, GameObject content) {
-            var instance = GameObjectUtil.Instantiate(_tilePrefab, CalculatePosition(x, y));
+            var instance = GameObjectUtil.Instantiate(_tilePrefab, CalculateTilePosition(x, y));
             instance.name = instance.name = x + ", " + y;
             instance.transform.parent = content.transform;
-            return instance.GetComponent<Tile>();
+            Tile tile = instance.GetComponent<Tile>();
+            tile.Initialize(x,y);
+            return tile;
         }
         
         void PopulateDrops () {
             //this method sould call only when reset board
             foreach (var spawner in _spawners) {
                 for (int i = 0; i < spawner.GetCurrentTileCount(); i++) {
-                    _drops.Add(spawner.CreateDrop());
+                    spawner.CreateDrop();
                 }
             }
         }
         
-
-        Vector3 CalculatePosition(int x, int y) {
+        Vector3 CalculateTilePosition(int x, int y) {
             return new Vector3(tileAspectLength.x * x, tileAspectLength.y * y, 0);
         }
-
+        
         public Tile GetTile(int x, int y) {
-            return _tiles[x * columnCount + y];
+            
+            int index = x * columnCount + y;
+            
+            if(!IsInRange (x, y) || _tiles.ElementAtOrDefault(index) == null )
+                return null;
+            return _tiles[index];
+        }
+
+        private bool IsInRange(int x, int y) {
+            if (x < 0 || x > columnCount - 1 || y < 0 || y > rowCount - 1)
+                return false;
+            return true;
         }
         
     }
