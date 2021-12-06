@@ -25,10 +25,9 @@ namespace SO_Scripts.Managers {
         private static int columnCount = 8;
         private Vector2 tileAspectLength;
         private List<Spawner> _spawners;
-        private List<Tile> _tiles; //indexing  x*ColumnCount + y
+        [SerializeField]private List<Tile> _tiles; //indexing  x*ColumnCount + y
         
         public void FirstInitialize() {
-            
             _originPoint = GameObject.FindWithTag("BoardOrigin");
             /*if you run into a problem when finding content object you can handle with spesified method
             but not necessery now*/
@@ -39,13 +38,15 @@ namespace SO_Scripts.Managers {
             ResetBoard();
             ModifyOriginPosition();
         }
-
+        
         void ModifyOriginPosition() {
-            //TODO calculate with coding not manuel 
             //its for showing all tiles on center of camera
-            //ORIGINAL.... _originPoint.transform.localPosition = new Vector3(-10, -9, 0);
+            //TODO calculate with coding not manuel 
+            
+            //ORIGINAL.... 
+            _originPoint.transform.localPosition = new Vector3(-10, -9, 0);
             //TESTİNG.....
-            _originPoint.transform.localPosition = new Vector3(100, -9, 0);
+            //_originPoint.transform.localPosition = new Vector3(100, -9, 0);
         }
 
         Vector2 findAspectLengths(GameObject tilePrefab) {
@@ -61,30 +62,29 @@ namespace SO_Scripts.Managers {
             PopulateDrops();
         }
 
-       void PopulateTiles(int rowCount, int columnCount) {
+        void PopulateTiles(int rowCount, int columnCount) {
 
-            _tiles = new List<Tile>();
+            int size = rowCount * columnCount;
+            _tiles = new List<Tile>(size);
+            for (int i = 0; i < size; i++) _tiles.Add(null);
             
             //row*column times create tiles
             for (int y = 0; y < rowCount; y++) {
                 for (int x = 0; x < columnCount; x++) {
-                    
-                    //first rows creating so indexing is Ex.(3,7) = 3*columnCount + 7
+                    //first rows creating so indexing is Ex.(3,7) = 3 + rowCount * 7
                     Tile tile = CreateTile(x, y, _contentTiles);
+
                     if (tile != null) {
-                        _tiles.Add(tile);
+                        int index = x + (y * rowCount);
+                        _tiles.Insert(index, tile);
                         _spawners[x].AddTile(tile); //assign tile to response spawners
-                    } else {
-                        Debug.LogWarning("Tile Creating fail");
-                    }
-                    
+                    } else { Debug.LogWarning("Tile Creating fail"); }
+
                 }
             }
 
-            if (_tiles.Contains(null)) {
-                Debug.LogWarning("Tile Board fail");
-            }
-            
+            if (_tiles.Contains(null)) { Debug.LogWarning("Tile Board fail"); }
+
         }
 
         void PopulateSpawners(int columnCount) {
@@ -106,8 +106,6 @@ namespace SO_Scripts.Managers {
                     return null;
                 }
             }
-            
-            //Debug.Log("spawner added to "+columnNo);
             
             //Instantiation
             GameObject instance;
@@ -148,8 +146,7 @@ namespace SO_Scripts.Managers {
         }
         
         public Tile GetTile(int x, int y) {
-            
-            int index = x * columnCount + y;
+            int index = x + (y * rowCount);
             
             if(!IsInRange (x, y) || _tiles.ElementAtOrDefault(index) == null )
                 return null;
