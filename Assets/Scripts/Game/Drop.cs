@@ -30,8 +30,10 @@ namespace Game {
             //TODO call explosion effect and add some score to player...
         }
         
+        
         public void SetTile(Tile target) {
             target.drop = this;
+            transform.position = target.transform.position;
         }
         
         private void SetSpriteRenderer() {

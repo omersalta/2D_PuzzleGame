@@ -16,6 +16,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/InputState.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Picker.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/MasterManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/DE1F8EF4-975B-4EAC-BEB0-ACCC1B22C9B0/7c/cb8cd693/TweenExtensions.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
@@ -26,13 +27,13 @@
       <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/RecycleGameObject/ObjectPool.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Test/AccessingTest.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/UI/InputState.cs" />
-      <option value="$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/BoardManager.cs" />
-      <option value="$PROJECT_DIR$/Assets/Scripts/Game/Drop.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/Spawner.cs" />
+      <option value="$PROJECT_DIR$/Assets/Scripts/Game/Drop.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/Tile.cs" />
-      <option value="$PROJECT_DIR$/Assets/Scripts/Game/GameManager.cs" />
-      <option value="$PROJECT_DIR$/Assets/Scripts/Game/Picker.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/InputState.cs" />
+      <option value="$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/BoardManager.cs" />
+      <option value="$PROJECT_DIR$/Assets/Scripts/Game/Picker.cs" />
+      <option value="$PROJECT_DIR$/Assets/Scripts/Game/GameManager.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="21mEujsqcYHEzA1oOX10oKaQmsz" />
@@ -76,7 +77,8 @@
       <updated>1638538091930</updated>
       <workItem from="1638538100298" duration="4742000" />
       <workItem from="1638615937468" duration="24184000" />
-      <workItem from="1638718859792" duration="15824000" />
+      <workItem from="1638718859792" duration="22132000" />
+      <workItem from="1638819339862" duration="9926000" />
     </task>
     <servers />
   </component>

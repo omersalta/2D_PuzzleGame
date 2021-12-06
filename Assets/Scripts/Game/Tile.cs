@@ -14,7 +14,7 @@ namespace Game {
         
         private SpriteRenderer _renderer;
         
-        [SerializeField] public Vector2Int coordinate { get; private set; }
+        public Vector2Int coordinate { get; private set; }
         public Drop drop;
         
         public void Initialize(int x, int y) {
