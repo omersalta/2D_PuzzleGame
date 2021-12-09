@@ -1,13 +1,22 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using SO_Scripts.Managers;
 using UnityEngine;
 
 namespace Game {
 
     public class Tile : MonoBehaviour {
         
+        enum nDirection {
+            RIGTH,
+            DOWN,
+            LEFT,
+            UP,
+        }
+
         //if the game has more than one player so need to keep list of pickers ex. 
         private static Picker staticPicker;
-        
         public static void SetPicker(Picker picker) {
             staticPicker = picker;
         }
@@ -31,8 +40,139 @@ namespace Game {
             staticPicker.PickTile(this);
         }
 
-        
+        public void explodeDrop() {
+            drop?.Explode();
+            drop = null;
+        }
 
+        private Tile GetTile(int x, int y) {
+            return MasterManager.boardManager.GetTile(x, y);
+        }
+        
+        
+        
+        private void CheckAndFillLine(Tile tile, nDirection checkingDir, List<Tile> list, int stack) {
+            
+            
+            Tile neighbor = tile.GetNeighbor(checkingDir);
+
+            if (!neighbor) {
+                return;
+            }
+               
+            if (tile.drop?.color == neighbor.drop?.color) {
+                if (stack > 0) {
+                    //if it coming stacked call must be added
+                    
+                    list.Add(neighbor);
+                } else {
+                    
+                    if (neighbor.CheckDir(checkingDir)) {
+                        //if return true for one step further so; must be added
+                        
+                        list.Add(neighbor);
+                    }
+                }
+
+                
+                CheckAndFillLine(neighbor, checkingDir, list, stack + 1);
+            }
+        }
+
+        private Tile GetNeighbor(nDirection neighborDirection) {
+            
+            Tile returnTile = null;
+            
+            switch (neighborDirection) {
+                
+                case nDirection.RIGTH:
+                    returnTile = GetTile(coordinate.x + 1, coordinate.y);
+                    break;
+                 case nDirection.DOWN:
+                     returnTile = GetTile(coordinate.x, coordinate.y-1);
+                    break;
+                 case nDirection.LEFT:
+                     returnTile = GetTile(coordinate.x-1, coordinate.y);
+                    break;
+                 case nDirection.UP:
+                     returnTile = GetTile(coordinate.x, coordinate.y+1);
+                    break;
+                
+            }
+
+            return returnTile;
+        }
+        
+        private bool CheckDir(nDirection checkingDir) {
+            Tile neighbor = GetNeighbor(checkingDir);
+
+            if (!neighbor || !neighbor.drop || !drop) {
+                return false;
+            }
+
+            if (GetNeighbor(checkingDir)?.drop?.color == drop?.color) {
+                return true;
+            }
+                
+            return false;
+        }
+
+        public bool Check() {
+            //TODO optimize this method (implemented quickly)
+            List<Tile> list = new List<Tile>();
+            CheckAndFillExplodeList(list);
+            if (list.Count > 0)
+                return true;
+            return false;
+        }
+        
+        public void CheckAndFillExplodeList(List<Tile> list) {
+
+            int enterCount = list.Count;
+            
+            if (CheckDir(nDirection.RIGTH)) {
+                if (CheckDir(nDirection.LEFT)) {
+                    CheckAndFillLine(this,nDirection.RIGTH,list,1);
+                } else {
+                    CheckAndFillLine(this, nDirection.RIGTH,list,0);
+                }
+            }
+            
+            if (CheckDir(nDirection.LEFT)) {
+                if (CheckDir(nDirection.RIGTH)) {
+                    CheckAndFillLine(this, nDirection.LEFT,list,1);
+                } else {
+                    CheckAndFillLine(this, nDirection.LEFT,list,0);
+                }
+            }
+            
+            if (CheckDir(nDirection.UP)) {
+                if (CheckDir(nDirection.DOWN)) {
+                    CheckAndFillLine(this, nDirection.UP,list,1);
+                } else {
+                    CheckAndFillLine(this, nDirection.UP,list,0);
+                }
+            }
+            
+            if (CheckDir(nDirection.DOWN)) {
+                if (CheckDir(nDirection.UP)) {
+                    CheckAndFillLine(this, nDirection.DOWN,list,1);
+                } else {
+                    CheckAndFillLine(this, nDirection.DOWN,list,0);
+                }
+            }
+            
+            
+            if (list.Count != enterCount) { //if something added to explode list the node one must added 
+                list.Add(this);
+            }
+            
+            
+        }
+
+        public Spawner GetSpawner() {
+            return MasterManager.boardManager.AskSpawner(this);
+        }
     }
 
 }
