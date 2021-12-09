@@ -60,6 +60,7 @@ namespace SO_Scripts.Managers {
             PopulateSpawners(columnCount);
             PopulateTiles(rowCount, columnCount);
             PopulateDrops();
+            FindObjectOfType<GameManager>().OnInitialize();
         }
 
         void PopulateTiles(int rowCount, int columnCount) {
@@ -157,6 +158,16 @@ namespace SO_Scripts.Managers {
             if (x < 0 || x > columnCount - 1 || y < 0 || y > rowCount - 1)
                 return false;
             return true;
+        }
+
+        public List<Tile> GetTileList() {
+            return _tiles;
+        }
+        
+        public Spawner AskSpawner(Tile tile) {
+            /*if you run into a problem when finding spawners you can handle with find with loop (columnNo == columnNumber)
+            but not necessery now*/
+           return _spawners[tile.coordinate.x];
         }
         
     }
