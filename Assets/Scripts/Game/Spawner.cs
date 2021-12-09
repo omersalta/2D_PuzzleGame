@@ -13,7 +13,13 @@ namespace Game {
         public bool Activate;
         [SerializeField]
         private List<Tile> myColumnTiles;
+        private static GameManager _gameManager;
 
+        public static void SetGameManager(GameManager manager) {
+            _gameManager = manager;
+        }
+        
+        
         public int GetCurrentTileCount() { return myColumnTiles.Count; }
 
         public void AddTile(Tile tile) {
@@ -22,10 +28,10 @@ namespace Game {
                 Debug.LogWarning("there is already same level tile");
             }
         
-            myColumnTiles.Insert(0, tile);
+            myColumnTiles.Add(tile);
 
             //after every adding ordering coordinate y values (y = 0 is the last one)
-            myColumnTiles = myColumnTiles.OrderByDescending(tile => tile.coordinate.y).ToList();
+            myColumnTiles = myColumnTiles.OrderBy(tile => tile.coordinate.y).ToList();
 
         }
     
@@ -64,38 +70,69 @@ namespace Game {
             Drop drop = dropGO.GetComponent<Drop>();
             drop.FirstInitialize(GetRandomColor());
             Tile EmptyTile = GetUndermostEmptyTile();
-            EmptyTile.drop = drop;
-            drop.SetTile(EmptyTile);
-        
+            _gameManager.Tweening(drop,EmptyTile);
         }
 
         private Tile GetUndermostEmptyTile() {
-            //its return undermost empty tile
-            for (int i = myColumnTiles.Count - 1; -1 < i; i--) {
-                if (myColumnTiles[i].drop == null) {
-                    return myColumnTiles[i];
+            //its return undermost empty tile if correctly ordered from coordinate.y
+            foreach (var tile in myColumnTiles) {
+                if (tile.drop == null) {
+                    
+                    return tile;
                 }
             }
-
-            Debug.LogWarning("there is no empty tile");
+            
             return null;
         }
+        
+        private Tile GetUndermostEmptyTileFromİndex(int index) {
+            //its return undermost empty tile
+            int lastEmptyIndex = -1;
 
-        public void FallDrops() {
-            int currentIndex = -1;
-
-            foreach (Tile tile in myColumnTiles) {
-                currentIndex++;
-                int filledCount = 0;
-                int emptyCount = 0;
-
-                for (int i = currentIndex; i < myColumnTiles.Count - 1; i++) {
-                    if (myColumnTiles[i + 1].drop == null) { emptyCount++; } else { filledCount++; }
-                }
-
-                tile.drop?.SetTile(myColumnTiles[currentIndex + emptyCount]);
+            if (index < 0 || myColumnTiles.Count-2 <= index)
+                return null;
             
+            for (int i = index; i > -1; i--) {
+                if (myColumnTiles[i].drop == null) {
+                    lastEmptyIndex = i;
+                }
             }
+
+            if (lastEmptyIndex == -1)
+                return null;
+            
+            return myColumnTiles[lastEmptyIndex];
+        }
+        
+        public void FallDropsAndFillList(List<Tile> list,bool outoSpawn) {
+            //it fall all drops need to drop and fill given list with last moved drop for cheking again
+
+            
+            //Falling Drops
+            for (int i = 0; i < myColumnTiles.Count; i++) {
+                
+                Tile tile = myColumnTiles[i];
+                
+                if(!tile){break;}
+                
+                if (tile.drop) {
+                    Tile undermostEmpty = GetUndermostEmptyTile();
+                    if (undermostEmpty && undermostEmpty.coordinate.y < tile.coordinate.y) {
+                        list.Add(undermostEmpty);
+                        _gameManager.Tweening(tile.drop,undermostEmpty);
+                        tile.drop = null;
+                    }
+                }
+                
+            }
+            
+            if (outoSpawn) {
+                // for (int i = 0; i < emptyCount; i++) {
+                //     //if you want outospawn work even when inactive so call _CreateDrop();
+                //     CreateDrop();
+                // }
+            }
+            
         }
     
         private Drop.dropColors GetRandomColor() {
