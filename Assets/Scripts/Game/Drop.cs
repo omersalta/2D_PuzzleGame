@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using SO_Scripts.Managers;
 using UnityEngine;
 using Utilities.RecycleGameObject;
@@ -9,14 +10,15 @@ namespace Game {
     {
 
         public enum dropColors {
+            //these enums's queue must same as drop sprites's queue
+            Yellow,
             Blue,
             Green,
             Red,
-            Yellow
         }
         
         public dropColors color { get; private set; }
-
+        
         public void FirstInitialize(dropColors color) {
             this.color = color;
             Restart();
@@ -30,16 +32,15 @@ namespace Game {
             //TODO call explosion effect and add some score to player...
         }
         
-        
-        public void SetTile(Tile target) {
-            target.drop = this;
-            transform.position = target.transform.position;
-        }
-        
         private void SetSpriteRenderer() {
             GetComponent<SpriteRenderer>().sprite = MasterManager.dropSprites[(int) color];
         }
-        
+
+        public void Explode() {
+            //TODO create explosion effect
+            GameObjectUtil.Destroy(gameObject);
+        }
+
     }
 
 }
