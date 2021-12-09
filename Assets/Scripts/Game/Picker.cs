@@ -55,7 +55,12 @@ namespace Game {
         
             Debug.Log("move gonna happend : " + TouchedTile +",  "+targetTile);
             
-            if (targetTile == null) {
+            if (targetTile == null || TouchedTile == null) {
+                return;
+            }
+            
+            if (targetTile.drop == null || TouchedTile.drop == null) {
+                //TODO FakeMove Func call
                 return;
             }
             
