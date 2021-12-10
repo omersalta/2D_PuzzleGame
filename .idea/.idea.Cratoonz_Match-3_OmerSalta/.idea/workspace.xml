@@ -8,12 +8,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/BoardManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/GameManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Utilities/RecycleGameObject/RecycleGameObject.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/88F69663-E9A6-4D00-B209-1DD8DFD4D38F/69/27c72933/GameObject.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/InputModules/BaseInput.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/88F69663-E9A6-4D00-B209-1DD8DFD4D38F/b9/aa532107/ScriptableObject.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/BoardManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/GameManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/InputState.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Picker.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/MasterManager.cs" root0="FORCE_HIGHLIGHTING" />
@@ -31,10 +31,10 @@
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/Tile.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/Spawner.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/InputState.cs" />
-      <option value="$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/BoardManager.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/GameManager.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/Picker.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Utilities/ExtTransform.cs" />
+      <option value="$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/BoardManager.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="21mEujsqcYHEzA1oOX10oKaQmsz" />

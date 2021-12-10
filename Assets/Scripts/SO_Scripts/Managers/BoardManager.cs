@@ -77,9 +77,7 @@ namespace SO_Scripts.Managers {
 
                 }
             }
-
-            if (_tiles.Contains(null)) { Debug.LogWarning("Tile Board fail"); }
-
+            
         }
 
         void PopulateSpawners(int columnCount) {
