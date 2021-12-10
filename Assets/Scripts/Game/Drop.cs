@@ -17,7 +17,14 @@ namespace Game {
             Red,
         }
         
+        private static GameManager _gameManager;
+
+        public static void SetGameManager(GameManager manager) {
+            _gameManager = manager;
+        }
+        
         public dropColors color { get; private set; }
+        public SpriteRenderer myRenderer;
         
         public void FirstInitialize(dropColors color) {
             this.color = color;
@@ -30,15 +37,17 @@ namespace Game {
         
         public void Shutdown() {
             //TODO call explosion effect and add some score to player...
+            _gameManager.ReverseExplosionTweenSuddenly(this);
         }
         
         private void SetSpriteRenderer() {
-            GetComponent<SpriteRenderer>().sprite = MasterManager.dropSprites[(int) color];
+            myRenderer = GetComponent<SpriteRenderer>();
+            myRenderer.sprite = MasterManager.dropSprites[(int) color];
         }
 
         public void Explode() {
             //TODO create explosion effect
-            GameObjectUtil.Destroy(gameObject);
+            _gameManager.ExplosionTween(this);
         }
 
     }
