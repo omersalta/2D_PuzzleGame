@@ -60,6 +60,7 @@ namespace Game {
             }
             
             if (targetTile.drop == null || TouchedTile.drop == null) {
+                
                 //TODO FakeMove Func call
                 return;
             }

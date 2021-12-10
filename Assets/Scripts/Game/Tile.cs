@@ -49,11 +49,8 @@ namespace Game {
             return MasterManager.boardManager.GetTile(x, y);
         }
         
-        
-        
-        private void CheckAndFillLine(Tile tile, nDirection checkingDir, List<Tile> list, int stack) {
-            
-            
+        private void CheckLine(Tile tile, nDirection checkingDir, List<Tile> list, int stack) {
+
             Tile neighbor = tile.GetNeighbor(checkingDir);
 
             if (!neighbor) {
@@ -63,19 +60,14 @@ namespace Game {
             if (tile.drop?.color == neighbor.drop?.color) {
                 if (stack > 0) {
                     //if it coming stacked call must be added
-                    
                     list.Add(neighbor);
                 } else {
-                    
                     if (neighbor.CheckDir(checkingDir)) {
                         //if return true for one step further so; must be added
-                        
                         list.Add(neighbor);
                     }
                 }
-
-                
-                CheckAndFillLine(neighbor, checkingDir, list, stack + 1);
+                CheckLine(neighbor, checkingDir, list, stack + 1);
             }
         }
 
@@ -132,33 +124,33 @@ namespace Game {
             
             if (CheckDir(nDirection.RIGTH)) {
                 if (CheckDir(nDirection.LEFT)) {
-                    CheckAndFillLine(this,nDirection.RIGTH,list,1);
+                    CheckLine(this,nDirection.RIGTH,list,1);
                 } else {
-                    CheckAndFillLine(this, nDirection.RIGTH,list,0);
+                    CheckLine(this, nDirection.RIGTH,list,0);
                 }
             }
             
             if (CheckDir(nDirection.LEFT)) {
                 if (CheckDir(nDirection.RIGTH)) {
-                    CheckAndFillLine(this, nDirection.LEFT,list,1);
+                    CheckLine(this, nDirection.LEFT,list,1);
                 } else {
-                    CheckAndFillLine(this, nDirection.LEFT,list,0);
+                    CheckLine(this, nDirection.LEFT,list,0);
                 }
             }
             
             if (CheckDir(nDirection.UP)) {
                 if (CheckDir(nDirection.DOWN)) {
-                    CheckAndFillLine(this, nDirection.UP,list,1);
+                    CheckLine(this, nDirection.UP,list,1);
                 } else {
-                    CheckAndFillLine(this, nDirection.UP,list,0);
+                    CheckLine(this, nDirection.UP,list,0);
                 }
             }
             
             if (CheckDir(nDirection.DOWN)) {
                 if (CheckDir(nDirection.UP)) {
-                    CheckAndFillLine(this, nDirection.DOWN,list,1);
+                    CheckLine(this, nDirection.DOWN,list,1);
                 } else {
-                    CheckAndFillLine(this, nDirection.DOWN,list,0);
+                    CheckLine(this, nDirection.DOWN,list,0);
                 }
             }
             
