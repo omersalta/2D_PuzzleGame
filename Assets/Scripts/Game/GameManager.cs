@@ -62,7 +62,7 @@ namespace Game {
             animationCounter++;
             lastMovedDropsTiles.Add(targetTile);
             Debug.Log(targetTile.coordinate + "added to lastMovedDropsTiles");
-            drop.transform.DOLocalMove(targetTile.transform.localPosition, 1.5f).OnComplete(OnCompleteTween);
+            drop.transform.DOLocalMove(targetTile.transform.localPosition, 2f).OnComplete(OnCompleteTween);
             targetTile.drop = drop;
         }
         
@@ -72,8 +72,8 @@ namespace Game {
             animationCounter+=2;
             lastMovedDropsTiles.Add(first);
             lastMovedDropsTiles.Add(second);
-            first.drop.transform.DOLocalMove(second.transform.localPosition, 1.5f).OnComplete(OnCompleteTween);
-            second.drop.transform.DOLocalMove(first.transform.localPosition, 1.5f).OnComplete(OnCompleteTween);
+            first.drop.transform.DOLocalMove(second.transform.localPosition, 1.2f).OnComplete(OnCompleteTween);
+            second.drop.transform.DOLocalMove(first.transform.localPosition, 1.2f).OnComplete(OnCompleteTween);
             first.SwitchDrops(second);
         }
         
@@ -168,6 +168,10 @@ namespace Game {
             lastMovedDropsTiles.Clear();
             foreach (var spawner in toTriggerSpawners) {
                 spawner.FallDropsAndFillList(lastMovedDropsTiles,true);
+            }
+
+            if (lastMovedDropsTiles.Count < 1) {
+                _currentState = State.MOVE;
             }
             
         }
