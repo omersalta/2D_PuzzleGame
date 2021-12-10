@@ -23,6 +23,7 @@ namespace Game {
         private List<Tile> lastMovedDropsTiles = new List<Tile>();
 
         private void Awake() {
+            _currentState = State.MOVE;
             DOTween.Init();
             Spawner.SetGameManager(this);
             Drop.SetGameManager(this);
@@ -60,19 +61,20 @@ namespace Game {
             _currentState = State.ANIMATION;
             animationCounter++;
             lastMovedDropsTiles.Add(targetTile);
-            Debug.Log(targetTile.coordinate + "added to lastMovedDropsTiles");
-            drop.transform.DOLocalMove(targetTile.transform.localPosition, 1.4f).OnComplete(OnCompleteTween);
+            drop.transform.DOLocalMove(targetTile.transform.localPosition, 1.4f).SetEase(Ease.InOutSine)
+                .OnComplete(OnCompleteTween);
             targetTile.drop = drop;
         }
         
         public void TweeningSwitch(Tile first, Tile second) {
-            Debug.Log(first.coordinate +", "+ second.coordinate);
             _currentState = State.ANIMATION;
             animationCounter+=2;
             lastMovedDropsTiles.Add(first);
             lastMovedDropsTiles.Add(second);
-            first.drop.transform.DOLocalMove(second.transform.localPosition, 0.6f).OnComplete(OnCompleteTween);
-            second.drop.transform.DOLocalMove(first.transform.localPosition, 0.6f).OnComplete(OnCompleteTween);
+            first.drop.transform.DOLocalMove(second.transform.localPosition, 0.6f).SetEase(Ease.InOutSine)
+                .OnComplete(OnCompleteTween);
+            second.drop.transform.DOLocalMove(first.transform.localPosition, 0.6f).SetEase(Ease.InOutSine)
+                .OnComplete(OnCompleteTween);
             first.SwitchDrops(second);
         }
 
@@ -90,17 +92,13 @@ namespace Game {
             GameObjectUtil.Destroy(drop.gameObject);
         }
         
-        
         private void OnCompleteTween() {
             animationCounter--;
             if (animationCounter == 0) {
-                Debug.Log("lastMovedDropsTiles.count : "+lastMovedDropsTiles.Count);
                 if (CheckExplosion(lastMovedDropsTiles)) {
-                    Debug.Log("there is explosion");
                     return;
                 } else {
                     if(!isThereExplosion){
-                        Debug.Log("reversing");
                         MoveReverse();
                     }
                 }
@@ -113,12 +111,38 @@ namespace Game {
             isThereExplosion = true;
             TweeningSwitch(firstTile,secondTile);
         }
-        
+
+        public void TweeningFakeMove(Drop drop, Picker.Direction dir ) {
+            
+            _currentState = State.ANIMATION;
+            animationCounter++;
+            Vector3 v3;
+            Transform t = drop.transform;
+            
+            switch (dir) {
+                case Picker.Direction.RIGHT://rigth
+                    v3 = Vector3.right;
+                    break;
+                case Picker.Direction.DOWN://down
+                    v3 = Vector3.down;
+                    break;
+                case Picker.Direction.LEFT://left
+                    v3 = Vector3.left;
+                    break;
+                case Picker.Direction.UP://up
+                    v3 = Vector3.up;
+                    break;
+                default:
+                    Debug.LogWarning("unknown direction value");
+                    v3 = Vector3.zero;
+                    break;
+            }
+            t.DOMove(t.position + v3, 0.2f).SetEase(Ease.InOutSine)
+                .SetLoops(2,LoopType.Yoyo).OnComplete(OnCompleteTween);
+        }
         
         public void Move(Tile firts, Tile second) {
             
-            Debug.Log("current state : " + _currentState);
-
             if (_currentState != State.MOVE) {
                 return;
             }
@@ -126,7 +150,6 @@ namespace Game {
             firstTile = firts;
             secondTile = second;
             isThereExplosion = false;
-            Debug.Log("move on "+ firts +", "+second);
             TweeningSwitch(firstTile,secondTile);
         }
 
@@ -151,12 +174,10 @@ namespace Game {
             //List<Tile> list = MasterManager.boardManager.GetTileList();
             List<Tile> explodeList = new List<Tile>();
             
-            
             foreach (var tile in chekingList) {
                 tile.CheckAndFillExplodeList(explodeList);
             }
             
-
             if (explodeList.Count > 0) {
                 ExplodeThese(explodeList);
                 isThereExplosion = true;
@@ -165,10 +186,9 @@ namespace Game {
             
             return false;
         }
-
+        
         private void ExplodeThese(List<Tile> explodeList) {
             
-            Debug.Log("explosionn...");
             List<Spawner> toTriggerSpawners = new List<Spawner>();
             
             foreach (var tile in explodeList) {
