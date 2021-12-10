@@ -32,15 +32,15 @@ namespace SO_Scripts.Managers {
             _contentSpawners = _originPoint.transform.GetChild(0).gameObject;
             _contentTiles = _originPoint.transform.GetChild(1).gameObject;
             tileAspectLength = findAspectLengths(_tilePrefab);
-            //Debug.Log("this massage will output after awake");
             ResetBoard();
             ModifyOriginPosition();
         }
         
         void ModifyOriginPosition() {
             //its for showing all tiles on center of camera
-            //TODO calculate with coding not manuel 
-            _originPoint.transform.localPosition = new Vector3(-10, -10, 0);
+            //TODO calculate with coding not manuel
+            Vector3 offset = new Vector3(columnCount * tileAspectLength.x, rowCount * tileAspectLength.x, 0);
+            _originPoint.transform.position = -offset/2;
         }
 
         Vector2 findAspectLengths(GameObject tilePrefab) {
@@ -56,7 +56,7 @@ namespace SO_Scripts.Managers {
             PopulateDrops();
             FindObjectOfType<GameManager>().OnInitialize();
         }
-
+        
         void PopulateTiles(int rowCount, int columnCount) {
 
             int size = rowCount * columnCount;
