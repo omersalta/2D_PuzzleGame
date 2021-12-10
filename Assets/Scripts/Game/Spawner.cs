@@ -47,7 +47,6 @@ namespace Game {
         }
     
         public void OnMouseUpAsButton() {
-            Debug.Log("onActivatebutton in spawner :" + columnNo );
             Activate = !Activate;
             UpdateRendererColor();
         }
@@ -82,7 +81,6 @@ namespace Game {
             Drop drop = dropGO.GetComponent<Drop>();
             drop.FirstInitialize(GetRandomColor());
             Tile EmptyTile = GetUndermostEmptyTile();
-            Debug.Log("emptyTile is ="+EmptyTile.coordinate);
             _gameManager.Tweening(drop,EmptyTile);
         }
 
@@ -132,7 +130,6 @@ namespace Game {
                 
             }
             
-            Debug.Log("Spawner Columno :"+columnNo +" starting outo create emptyCount:"+GetCurrentEmptyCount());
             int createCount = dropCountBeforeLastExplosion - GetCurrentDropCount();
             if (outoSpawn) {
                 for (int i = 0; i < createCount; i++) {
