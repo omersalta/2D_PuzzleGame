@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using SO_Scripts.Managers;
 using UnityEngine;
 using Utilities;
+using Utilities.RecycleGameObject;
 
 namespace Game {
 
@@ -25,16 +25,15 @@ namespace Game {
         private void Awake() {
             DOTween.Init();
             Spawner.SetGameManager(this);
+            Drop.SetGameManager(this);
         }
         
-
         private void Update() {
         
             switch (_currentState) {
                 //////////////////////////////////////////
                 //////////////////////////////////////////
                 case State.INITIAL:
-                    
                     //TODO game manager initilization state if its has long time
                     _currentState = State.MOVE;
                     break;
@@ -62,7 +61,7 @@ namespace Game {
             animationCounter++;
             lastMovedDropsTiles.Add(targetTile);
             Debug.Log(targetTile.coordinate + "added to lastMovedDropsTiles");
-            drop.transform.DOLocalMove(targetTile.transform.localPosition, 2f).OnComplete(OnCompleteTween);
+            drop.transform.DOLocalMove(targetTile.transform.localPosition, 1.4f).OnComplete(OnCompleteTween);
             targetTile.drop = drop;
         }
         
@@ -72,10 +71,25 @@ namespace Game {
             animationCounter+=2;
             lastMovedDropsTiles.Add(first);
             lastMovedDropsTiles.Add(second);
-            first.drop.transform.DOLocalMove(second.transform.localPosition, 1.2f).OnComplete(OnCompleteTween);
-            second.drop.transform.DOLocalMove(first.transform.localPosition, 1.2f).OnComplete(OnCompleteTween);
+            first.drop.transform.DOLocalMove(second.transform.localPosition, 0.6f).OnComplete(OnCompleteTween);
+            second.drop.transform.DOLocalMove(first.transform.localPosition, 0.6f).OnComplete(OnCompleteTween);
             first.SwitchDrops(second);
         }
+
+        public void ExplosionTween(Drop drop) {
+            drop.transform.DOScale(2f, 0.8f);
+            drop.myRenderer.DOFade(0, 1f).OnComplete(() => OnCompleteExpTween(drop));
+        }
+        
+        public void ReverseExplosionTweenSuddenly(Drop drop) {
+            drop.transform.DOScale(1f, 0f);
+            drop.myRenderer.DOFade(1, 0f);
+        }
+
+        private void OnCompleteExpTween(Drop drop) {
+            GameObjectUtil.Destroy(drop.gameObject);
+        }
+        
         
         private void OnCompleteTween() {
             animationCounter--;
@@ -158,9 +172,11 @@ namespace Game {
             List<Spawner> toTriggerSpawners = new List<Spawner>();
             
             foreach (var tile in explodeList) {
-                
-                if (!toTriggerSpawners.Contains(tile.GetSpawner())) {
-                    toTriggerSpawners.Add(tile.GetSpawner());
+
+                Spawner spawner = tile.GetSpawner();
+                if (!toTriggerSpawners.Contains(spawner)) {
+                    toTriggerSpawners.Add(spawner);
+                    spawner.SetDropCountBeforeDrop();
                 }
                 
                 tile.explodeDrop();
