@@ -112,15 +112,7 @@ namespace Game {
 
                 Reset();
             }
-
-            if (swipeRight)
-                Debug.Log("rigt");
-            if (swipeLeft)
-                Debug.Log("left");
-            if (swipeUp)
-                Debug.Log("up");
-            if (swipeDown)
-                Debug.Log("down");
+            
             
         }
         
