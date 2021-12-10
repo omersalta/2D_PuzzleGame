@@ -34,8 +34,8 @@
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/Picker.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/SO_Scripts/Managers/BoardManager.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/Tile.cs" />
-      <option value="$PROJECT_DIR$/Assets/Scripts/Game/Spawner.cs" />
       <option value="$PROJECT_DIR$/Assets/Scripts/Game/GameManager.cs" />
+      <option value="$PROJECT_DIR$/Assets/Scripts/Game/Spawner.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="21mEujsqcYHEzA1oOX10oKaQmsz" />

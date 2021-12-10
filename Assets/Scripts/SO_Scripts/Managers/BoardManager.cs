@@ -2,9 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Game;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
-using Utilities;
 using Utilities.RecycleGameObject;
 
 namespace SO_Scripts.Managers {
@@ -42,11 +40,7 @@ namespace SO_Scripts.Managers {
         void ModifyOriginPosition() {
             //its for showing all tiles on center of camera
             //TODO calculate with coding not manuel 
-            
-            //ORIGINAL.... 
-            _originPoint.transform.localPosition = new Vector3(-10, -9, 0);
-            //TESTİNG.....
-            //_originPoint.transform.localPosition = new Vector3(100, -9, 0);
+            _originPoint.transform.localPosition = new Vector3(-10, -10, 0);
         }
 
         Vector2 findAspectLengths(GameObject tilePrefab) {
@@ -114,7 +108,7 @@ namespace SO_Scripts.Managers {
             instance = Instantiate(_spawnerPrefab,pos,quaternion.identity);
             instance.transform.parent = _contentSpawners.transform;
             Spawner spawner = instance.GetComponent<Spawner>();
-            spawner.Initialize(columnNo, _dropPrefab);
+            spawner.Initialize(columnNo, _dropPrefab, true);
             return spawner;
             
         }

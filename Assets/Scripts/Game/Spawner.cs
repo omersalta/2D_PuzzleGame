@@ -10,10 +10,11 @@ namespace Game {
 
         public int columnNo { get; private set; }
         private GameObject _dropPrefab;
-        public bool Activate;
+        public bool Activate = true;
         [SerializeField]
         private List<Tile> myColumnTiles;
         private static GameManager _gameManager;
+        private int dropCountBeforeLastExplosion;
 
         public static void SetGameManager(GameManager manager) {
             _gameManager = manager;
@@ -34,24 +35,35 @@ namespace Game {
             myColumnTiles = myColumnTiles.OrderBy(tile => tile.coordinate.y).ToList();
 
         }
+
+        private void UpdateRendererColor() {
+            
+            if (Activate) {
+                GetComponent<SpriteRenderer>().color = Color.green;
+            } else {
+                GetComponent<SpriteRenderer>().color = Color.red;
+            }
+
+        }
     
-        public void OnClick_AvtisionButton() {
-            //TODO add clickable activision spawner and show to user with visual something (text,sprite...)
+        public void OnMouseUpAsButton() {
+            Debug.Log("onActivatebutton in spawner :" + columnNo );
+            Activate = !Activate;
+            UpdateRendererColor();
         }
 
         public void Initialize(int myColumnNo, GameObject dropPrefab) {
             _dropPrefab = dropPrefab;
             columnNo = myColumnNo;
-            Activate = true;
             myColumnTiles = new List<Tile>();
+            UpdateRendererColor();
         }
     
         public void Initialize(int myColumnNo, GameObject dropPrefab, bool activationState) {
-            _dropPrefab = dropPrefab;
-            columnNo = myColumnNo;
             Activate = activationState;
-            myColumnTiles = new List<Tile>();
+            Initialize(myColumnNo, dropPrefab);
         }
+        
 
         public void CreateDrop() {
         
@@ -66,10 +78,11 @@ namespace Game {
         
             GameObject dropGO;
             dropGO = GameObjectUtil.Instantiate(_dropPrefab, transform.localPosition);
-            dropGO.transform.localPosition = transform.position;
+            dropGO.transform.localPosition = transform.localPosition;
             Drop drop = dropGO.GetComponent<Drop>();
             drop.FirstInitialize(GetRandomColor());
             Tile EmptyTile = GetUndermostEmptyTile();
+            Debug.Log("emptyTile is ="+EmptyTile.coordinate);
             _gameManager.Tweening(drop,EmptyTile);
         }
 
@@ -84,30 +97,22 @@ namespace Game {
             
             return null;
         }
-        
-        private Tile GetUndermostEmptyTileFromİndex(int index) {
-            //its return undermost empty tile
-            int lastEmptyIndex = -1;
 
-            if (index < 0 || myColumnTiles.Count-2 <= index)
-                return null;
+        private int GetCurrentEmptyCount() {
+            int result = 0;
             
-            for (int i = index; i > -1; i--) {
-                if (myColumnTiles[i].drop == null) {
-                    lastEmptyIndex = i;
+            foreach (var tile in myColumnTiles) {
+                if (tile.drop == null) {
+                    result++;
                 }
             }
 
-            if (lastEmptyIndex == -1)
-                return null;
-            
-            return myColumnTiles[lastEmptyIndex];
+            return result;
         }
         
         public void FallDropsAndFillList(List<Tile> list,bool outoSpawn) {
             //it fall all drops need to drop and fill given list with last moved drop for cheking again
-
-            
+            int empty = 0;
             //Falling Drops
             for (int i = 0; i < myColumnTiles.Count; i++) {
                 
@@ -119,6 +124,7 @@ namespace Game {
                     Tile undermostEmpty = GetUndermostEmptyTile();
                     if (undermostEmpty && undermostEmpty.coordinate.y < tile.coordinate.y) {
                         list.Add(undermostEmpty);
+                        empty++;
                         _gameManager.Tweening(tile.drop,undermostEmpty);
                         tile.drop = null;
                     }
@@ -126,19 +132,29 @@ namespace Game {
                 
             }
             
+            Debug.Log("Spawner Columno :"+columnNo +" starting outo create emptyCount:"+GetCurrentEmptyCount());
+            int createCount = dropCountBeforeLastExplosion - GetCurrentDropCount();
             if (outoSpawn) {
-                // for (int i = 0; i < emptyCount; i++) {
-                //     //if you want outospawn work even when inactive so call _CreateDrop();
-                //     CreateDrop();
-                // }
+                for (int i = 0; i < createCount; i++) {
+                    //if you want outospawn work even when inactive so call _CreateDrop();
+                    CreateDrop();
+                }
             }
             
         }
-    
+        
         private Drop.dropColors GetRandomColor() {
             Drop.dropColors color;
             color = (Drop.dropColors) typeof(Drop.dropColors).GetRandomEnumValue();
             return color;
+        }
+
+        private int GetCurrentDropCount() {
+            return myColumnTiles.Count - GetCurrentEmptyCount();
+        }
+
+        public void SetDropCountBeforeExplosion() {
+            dropCountBeforeLastExplosion = GetCurrentDropCount();
         }
 
     }

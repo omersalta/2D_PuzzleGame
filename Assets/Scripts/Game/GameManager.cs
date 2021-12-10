@@ -176,7 +176,7 @@ namespace Game {
                 Spawner spawner = tile.GetSpawner();
                 if (!toTriggerSpawners.Contains(spawner)) {
                     toTriggerSpawners.Add(spawner);
-                    spawner.SetDropCountBeforeDrop();
+                    spawner.SetDropCountBeforeExplosion();
                 }
                 
                 tile.explodeDrop();
