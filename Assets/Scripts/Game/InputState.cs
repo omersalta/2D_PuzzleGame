@@ -91,7 +91,7 @@ namespace Game {
             }
 
             //Did we cross the distance?
-            if (_swipeDelta.magnitude > 80) {
+            if (_swipeDelta.magnitude > 50) {
                 //Which direction?
                 float x = _swipeDelta.x;
                 float y = _swipeDelta.y;
