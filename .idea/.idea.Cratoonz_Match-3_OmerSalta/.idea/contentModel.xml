@@ -41,9 +41,6 @@
             </e>
             <e p="SingletonReferances.cs" t="Include" />
           </e>
-          <e p="Test" t="Include">
-            <e p="AccessingTest.cs" t="Include" />
-          </e>
           <e p="Utilities" t="Include">
             <e p="ExtTransform.cs" t="Include" />
             <e p="RecycleGameObject" t="Include">
