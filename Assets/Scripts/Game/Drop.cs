@@ -1,21 +1,13 @@
-using System;
 using DG.Tweening;
 using SO_Scripts.Managers;
 using UnityEngine;
+using UnityEngine.Events;
 using Utilities.RecycleGameObject;
 
 namespace Game {
 
     public class Drop : MonoBehaviour,IRecyle 
     {
-
-        public enum dropColors {
-            //these enums's queue must same as drop sprites's queue
-            Yellow,
-            Blue,
-            Green,
-            Red,
-        }
         
         private static GameManager _gameManager;
 
@@ -26,7 +18,7 @@ namespace Game {
         public dropColors color { get; private set; }
         public SpriteRenderer myRenderer;
         
-        public void FirstInitialize(dropColors color) {
+        public void Initialize(dropColors color) {
             this.color = color;
             Restart();
         }
@@ -37,7 +29,8 @@ namespace Game {
         
         public void Shutdown() {
             //TODO call explosion effect and add some score to player...
-            _gameManager.ReverseExplosionTweenSuddenly(this);
+            this.transform.DOScale(1f, 0f);
+            this.myRenderer.DOFade(1, 0f);
         }
         
         private void SetSpriteRenderer() {
@@ -47,7 +40,30 @@ namespace Game {
 
         public void Explode() {
             //TODO create explosion effect
-            _gameManager.ExplosionTween(this);
+            transform.DOScale(2f, 0.8f);
+            myRenderer.DOFade(0, 1f).OnComplete(() => GameObjectUtil.Destroy(gameObject));
+        }
+        
+        public void FakeMove(Vector3 dir, UnityAction OnCompleate) {
+            
+            transform.DOMove(transform.position + dir, 0.2f)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(2, LoopType.Yoyo).OnComplete(OnCompleate.Invoke);
+        }
+        
+        public void Move(Tile targetTile, UnityAction OnCompleate) {
+            
+            targetTile.drop = this;
+            transform.DOLocalMove(targetTile.transform.localPosition, 1.4f)
+                .SetEase(Ease.InOutSine).OnComplete(OnCompleate.Invoke);
+        }
+        
+        public enum dropColors {
+            //these enums's queue must same as drop sprites's queue
+            Yellow,
+            Blue,
+            Green,
+            Red,
         }
 
     }

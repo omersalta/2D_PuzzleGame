@@ -25,7 +25,7 @@ namespace SO_Scripts.Managers {
         private List<Spawner> _spawners;
         [SerializeField]private List<Tile> _tiles; //indexing  x*ColumnCount + y
         
-        public void FirstInitialize() {
+        public void Initialize() {
             _originPoint = GameObject.FindWithTag("BoardOrigin");
             /*if you run into a problem when finding content object you can handle with spesified method
             but not necessery now*/
@@ -54,7 +54,7 @@ namespace SO_Scripts.Managers {
             PopulateSpawners(columnCount);
             PopulateTiles(rowCount, columnCount);
             PopulateDrops();
-            FindObjectOfType<GameManager>().OnInitialize();
+            FindObjectOfType<GameManager>().Initialize();
         }
         
         void PopulateTiles(int rowCount, int columnCount) {

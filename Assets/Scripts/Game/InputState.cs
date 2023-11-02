@@ -1,14 +1,8 @@
 using UnityEngine;
-using UnityEngine.Serialization;
-
-// public bool swipeLeft, swipeRight, swipeUp, swipeDown, isDraging;
-// private bool _tap;
-// private Vector2 _startTouch, _swipeDelta;
-
-
 namespace Game {
 
     public class InputState : MonoBehaviour {
+        //this class is cummon input state class for understanding user input likeswipe,drag,mouseUp,mouseDown
         
         #region Privates
         
@@ -23,7 +17,8 @@ namespace Game {
         #endregion
 
         #region Publics
-        
+
+        public float swipeTrashold = 50f;
         public bool swipeDown { get { return _swipeDown; } }
         public Vector2 swipeDelta { get { return _swipeDelta; } }
         
@@ -36,7 +31,6 @@ namespace Game {
         public bool swipeUp { get { return _swipeUp; } }
         
         #endregion
-        
         
         private void Update() {
             _mouseUp = _tap = _swipeLeft = _swipeRight = _swipeUp = _swipeDown = false;
@@ -89,9 +83,9 @@ namespace Game {
                 else if (Input.GetMouseButton(0))
                     _swipeDelta = (Vector2) Input.mousePosition - _startTouch;
             }
-
+            
             //Did we cross the distance?
-            if (_swipeDelta.magnitude > 50) {
+            if (_swipeDelta.magnitude > swipeTrashold) {
                 //Which direction?
                 float x = _swipeDelta.x;
                 float y = _swipeDelta.y;
@@ -115,8 +109,6 @@ namespace Game {
             
             
         }
-        
-        
 
         void Reset() {
             _startTouch = _swipeDelta = Vector2.zero;

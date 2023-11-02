@@ -3,93 +3,85 @@ using DG.Tweening;
 using SO_Scripts.Managers;
 using UnityEngine;
 using Utilities;
-using Utilities.RecycleGameObject;
 
 namespace Game {
 
     public class GameManager : MonoBehaviour
     {
-        enum State {
-            INITIAL,
-            MOVE,
-            ANIMATION,
-            GAME_OVER,
-        };
-        
+        #region Variables and Initialize
         private State _currentState;
         private int animationCounter = 0;
         private Tile firstTile, secondTile; //its for reverse move if no explosion
         private bool isThereExplosion; //if first move has no explosion use it
         private List<Tile> lastMovedDropsTiles = new List<Tile>();
-
+        
         private void Awake() {
-            _currentState = State.MOVE;
+            _currentState = State.INITIAL;
             DOTween.Init();
             Spawner.SetGameManager(this);
             Drop.SetGameManager(this);
         }
         
-        private void Update() {
-        
-            switch (_currentState) {
-                //////////////////////////////////////////
-                //////////////////////////////////////////
-                case State.INITIAL:
-                    //TODO game manager initilization state if its has long time
-                    _currentState = State.MOVE;
-                    break;
-                //////////////////////////////////////////
-                //////////////////////////////////////////
-                case State.MOVE:
-                    //TODO do if gonna do extra something when choosing move 
-                    break;
-                //////////////////////////////////////////
-                //////////////////////////////////////////
-                case State.ANIMATION:
-                    //TODO do if gonna do extra something when Tweening
-                    break;
-                //////////////////////////////////////////
-                //////////////////////////////////////////
-                case State.GAME_OVER:
-                    //TODO show game over panel and make recycle the game to play again
-                    break;
+        public void Initialize() {
+            
+            isThereExplosion = true;
+            lastMovedDropsTiles.Clear();
+            _currentState = State.MOVE;
+            List<Tile> _checkList = new List<Tile>();
+            
+            foreach (var tile in MasterManager.boardManager.GetTileList()) {
+                if (tile && tile.drop) {
+                    while (Check(tile)) {
+                        tile.drop.Initialize((Drop.dropColors) typeof(Drop.dropColors).GetRandomEnumValue());
+                    }
+                }
+            }
+            
+            bool Check(Tile tile) {
+                _checkList.Clear();
+                tile.CheckExplodeList(_checkList);
+                if (_checkList.Count > 0)
+                    return true;
+                return false;
             }
         
         }
-
-        public void Tweening(Drop drop, Tile targetTile) {
+        #endregion
+        
+        #region Public Methods
+        public void GoTo(Drop drop, Tile targetTile) {
             _currentState = State.ANIMATION;
             animationCounter++;
             lastMovedDropsTiles.Add(targetTile);
-            drop.transform.DOLocalMove(targetTile.transform.localPosition, 1.4f).SetEase(Ease.InOutSine)
-                .OnComplete(OnCompleteTween);
-            targetTile.drop = drop;
+            drop.Move(targetTile,OnCompleteTween);
+        }
+
+        public void SwitchTiles(Tile firts, Tile second) {
+            
+            if (_currentState != State.MOVE) {
+                return;
+            }
+            
+            firstTile = firts;
+            secondTile = second;
+            isThereExplosion = false;
+            SwitchTweening(firstTile,secondTile);
         }
         
-        public void TweeningSwitch(Tile first, Tile second) {
+        public void TweeningFakeMove(Drop drop, Vector3 dir ) {
+            
             _currentState = State.ANIMATION;
-            animationCounter+=2;
+            animationCounter++;
+            drop.FakeMove(dir, OnCompleteTween);
+        }
+        #endregion
+        
+        private void SwitchTweening(Tile first, Tile second) {
+            _currentState = State.ANIMATION;
+            animationCounter++;
             lastMovedDropsTiles.Add(first);
             lastMovedDropsTiles.Add(second);
-            first.drop.transform.DOLocalMove(second.transform.localPosition, 0.6f).SetEase(Ease.InOutSine)
-                .OnComplete(OnCompleteTween);
-            second.drop.transform.DOLocalMove(first.transform.localPosition, 0.6f).SetEase(Ease.InOutSine)
-                .OnComplete(OnCompleteTween);
-            first.SwitchDrops(second);
-        }
-
-        public void ExplosionTween(Drop drop) {
-            drop.transform.DOScale(2f, 0.8f);
-            drop.myRenderer.DOFade(0, 1f).OnComplete(() => OnCompleteExpTween(drop));
-        }
-        
-        public void ReverseExplosionTweenSuddenly(Drop drop) {
-            drop.transform.DOScale(1f, 0f);
-            drop.myRenderer.DOFade(1, 0f);
-        }
-
-        private void OnCompleteExpTween(Drop drop) {
-            GameObjectUtil.Destroy(drop.gameObject);
+            first.SwitchDrops(second,OnCompleteTween);
         }
         
         private void OnCompleteTween() {
@@ -104,113 +96,68 @@ namespace Game {
                 }
                 _currentState = State.MOVE;
             }
-            
         }
         
-        public void MoveReverse () {
+        private void MoveReverse () {
             isThereExplosion = true;
-            TweeningSwitch(firstTile,secondTile);
+            SwitchTweening(firstTile,secondTile);
         }
 
-        public void TweeningFakeMove(Drop drop, Picker.Direction dir ) {
-            
-            _currentState = State.ANIMATION;
-            animationCounter++;
-            Vector3 v3;
-            Transform t = drop.transform;
-            
-            switch (dir) {
-                case Picker.Direction.RIGHT://rigth
-                    v3 = Vector3.right;
-                    break;
-                case Picker.Direction.DOWN://down
-                    v3 = Vector3.down;
-                    break;
-                case Picker.Direction.LEFT://left
-                    v3 = Vector3.left;
-                    break;
-                case Picker.Direction.UP://up
-                    v3 = Vector3.up;
-                    break;
-                default:
-                    Debug.LogWarning("unknown direction value");
-                    v3 = Vector3.zero;
-                    break;
-            }
-            t.DOMove(t.position + v3, 0.2f).SetEase(Ease.InOutSine)
-                .SetLoops(2,LoopType.Yoyo).OnComplete(OnCompleteTween);
-        }
-        
-        public void Move(Tile firts, Tile second) {
-            
-            if (_currentState != State.MOVE) {
-                return;
-            }
-            
-            firstTile = firts;
-            secondTile = second;
-            isThereExplosion = false;
-            TweeningSwitch(firstTile,secondTile);
-        }
-
-        public void OnInitialize() {
-            
-            foreach (var tile in MasterManager.boardManager.GetTileList()) {
-                if (tile && tile.drop) {
-                    while (tile.Check()) {
-                        tile.drop.FirstInitialize((Drop.dropColors) typeof(Drop.dropColors).GetRandomEnumValue());
-                    }
-                }
-            }
-            isThereExplosion = true;
-            lastMovedDropsTiles.Clear();
-        }
-
+        #region Explosion Check
+        private List<Tile> _explodeList = new List<Tile>();
         private bool CheckExplosion(List<Tile> chekingList) {
 
             if (chekingList.Count < 1)
                 return false;
             
-            //List<Tile> list = MasterManager.boardManager.GetTileList();
-            List<Tile> explodeList = new List<Tile>();
-            
+            _explodeList.Clear();
             foreach (var tile in chekingList) {
-                tile.CheckAndFillExplodeList(explodeList);
+                tile.CheckExplodeList(_explodeList);
             }
             
-            if (explodeList.Count > 0) {
-                ExplodeThese(explodeList);
+            if (_explodeList.Count > 0) {
+                ExplodeThese(_explodeList);
                 isThereExplosion = true;
                 return true;
             }
             
             return false;
         }
+
+        private List<Spawner> _spawners = new List<Spawner>(8);
         
         private void ExplodeThese(List<Tile> explodeList) {
             
-            List<Spawner> toTriggerSpawners = new List<Spawner>();
-            
-            foreach (var tile in explodeList) {
-
+            _spawners.Clear();
+            foreach (var tile in explodeList)
+            {
                 Spawner spawner = tile.GetSpawner();
-                if (!toTriggerSpawners.Contains(spawner)) {
-                    toTriggerSpawners.Add(spawner);
+                if (!_spawners.Contains(spawner))
+                {
                     spawner.SetDropCountBeforeExplosion();
+                    _spawners.Add(spawner);
                 }
-                
                 tile.explodeDrop();
             }
             lastMovedDropsTiles.Clear();
-            foreach (var spawner in toTriggerSpawners) {
-                spawner.FallDropsAndFillList(lastMovedDropsTiles,true);
+            
+            foreach (Spawner spawner in _spawners) {
+                spawner.FallDropsAndFillList(lastMovedDropsTiles);
             }
 
-            if (lastMovedDropsTiles.Count < 1) {
+            if (lastMovedDropsTiles.Count <= 0) {
                 _currentState = State.MOVE;
             }
             
         }
+        #endregion
+        
+        enum State {
+            INITIAL,
+            MOVE,
+            ANIMATION,
+            GAME_OVER,
+        };
         
     }
 

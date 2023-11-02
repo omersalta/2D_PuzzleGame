@@ -26,7 +26,7 @@ namespace Game {
 
         void Update() {
             if(!_input.mouseUp)
-                Try();
+                TrySwipe();
         }
         
         public void PickTile(Tile tile) {
@@ -34,7 +34,7 @@ namespace Game {
                 TouchedTile = tile;
         }
 
-        private void Try() {
+        private void TrySwipe() {
             
             if (!TouchedTile || TouchedTile?.drop == null) { 
                 /*empty tile Check: this checking already made on PickTile() method.
@@ -43,46 +43,67 @@ namespace Game {
                 return;
             }
             
-            
             if (_input.swipeUp) {
                 _direction = Direction.UP;
-                Try(getTile(TouchedTile.coordinate.x, TouchedTile.coordinate.y + 1));
+                TryMove(getTile(TouchedTile.coordinate.x, TouchedTile.coordinate.y + 1));
                 TouchedTile = null;
             }else if (_input.swipeRight) {
                 _direction = Direction.RIGHT;
-                Try(getTile(TouchedTile.coordinate.x + 1, TouchedTile.coordinate.y));
+                TryMove(getTile(TouchedTile.coordinate.x + 1, TouchedTile.coordinate.y));
                 TouchedTile = null;
             }else if (_input.swipeDown) {
                 _direction = Direction.DOWN;
-                Try(getTile(TouchedTile.coordinate.x, TouchedTile.coordinate.y - 1));
+                TryMove(getTile(TouchedTile.coordinate.x, TouchedTile.coordinate.y - 1));
                 TouchedTile = null;
             }else if (_input.swipeLeft) {
                 _direction = Direction.LEFT;
-                Try(getTile(TouchedTile.coordinate.x - 1, TouchedTile.coordinate.y));
+                TryMove(getTile(TouchedTile.coordinate.x - 1, TouchedTile.coordinate.y));
                 TouchedTile = null;
             }
         }
 
-        private void Try(Tile targetTile) {
+        private void TryMove(Tile targetTile) {
             
             if (targetTile == null || TouchedTile == null) {
                 if(TouchedTile)
-                    _gameManager.TweeningFakeMove(TouchedTile.drop, _direction);
+                    _gameManager.TweeningFakeMove(TouchedTile.drop, GetV3Dir(_direction));
                 return;
             }
             
             if (targetTile.drop == null || TouchedTile.drop == null) {
                 if(TouchedTile.drop)
-                    _gameManager.TweeningFakeMove(TouchedTile.drop, _direction);
+                    _gameManager.TweeningFakeMove(TouchedTile.drop, GetV3Dir(_direction));
                 return;
             }
             
-            _gameManager.Move(TouchedTile, targetTile);
+            _gameManager.SwitchTiles(TouchedTile, targetTile);
         }
    
 
         private Tile getTile(int x, int y) {
             return MasterManager.boardManager.GetTile(x, y);
+        }
+
+        private Vector3 GetV3Dir(Direction dir)
+        {
+            switch (dir) {
+                case Picker.Direction.RIGHT://rigth
+                    return Vector3.right;
+                    break;
+                case Picker.Direction.DOWN://down
+                    return Vector3.down;
+                    break;
+                case Picker.Direction.LEFT://left
+                    return Vector3.left;
+                    break;
+                case Picker.Direction.UP://up
+                    return Vector3.up;
+                    break;
+                default:
+                    Debug.LogWarning("unknown direction value");
+                    return Vector3.zero;
+                    break;
+            }
         }
 
 

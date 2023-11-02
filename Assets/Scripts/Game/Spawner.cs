@@ -79,9 +79,9 @@ namespace Game {
             dropGO = GameObjectUtil.Instantiate(_dropPrefab, transform.localPosition);
             dropGO.transform.localPosition = transform.localPosition;
             Drop drop = dropGO.GetComponent<Drop>();
-            drop.FirstInitialize(GetRandomColor());
+            drop.Initialize(GetRandomColor());
             Tile EmptyTile = GetUndermostEmptyTile();
-            _gameManager.Tweening(drop,EmptyTile);
+            _gameManager.GoTo(drop,EmptyTile);
         }
 
         private Tile GetUndermostEmptyTile() {
@@ -108,7 +108,7 @@ namespace Game {
             return result;
         }
         
-        public void FallDropsAndFillList(List<Tile> list,bool outoSpawn) {
+        public void FallDropsAndFillList(List<Tile> list,bool outoSpawn = true) {
             //it fall all drops need to drop and fill given list with last moved drop for cheking again
             int empty = 0;
             //Falling Drops
@@ -123,7 +123,7 @@ namespace Game {
                     if (undermostEmpty && undermostEmpty.coordinate.y < tile.coordinate.y) {
                         list.Add(undermostEmpty);
                         empty++;
-                        _gameManager.Tweening(tile.drop,undermostEmpty);
+                        _gameManager.GoTo(tile.drop,undermostEmpty);
                         tile.drop = null;
                     }
                 }

@@ -20,7 +20,7 @@ namespace SO_Scripts.Managers {
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void FirstInitilize() {
-            boardManager.FirstInitialize();
+            boardManager.Initialize();
         }
         
         
