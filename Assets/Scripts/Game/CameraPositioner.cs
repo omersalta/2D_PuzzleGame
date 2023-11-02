@@ -5,7 +5,7 @@ namespace Game
     public class CameraPositioner : MonoBehaviour
     {
         [SerializeField] private BoardOriantionPoint _boardOriantionPoint;
-        private float sizeMargin = 0.5f;
+        private float sizeMargin = 1f;
         public void Position()
         {
             CalculateSize();
