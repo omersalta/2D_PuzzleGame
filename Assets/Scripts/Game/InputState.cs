@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace Game {
 
     public class InputState : MonoBehaviour {

@@ -44,7 +44,7 @@ namespace Utilities.RecycleGameObject {
                 var poolContainer = new GameObject(reference.gameObject.name + "ObjectPool");
                 
                 if (reference.gameObject.tag == "Drop") {
-                    poolContainer.transform.parent = MasterManager.boardManager._originPoint.transform;
+                    poolContainer.transform.parent = MasterManager.boardManager._oriantPoint.transform;
                 }
                 
                 pool = poolContainer.AddComponent<ObjectPool>();

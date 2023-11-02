@@ -4,7 +4,7 @@ using SO_Scripts.Managers;
 using UnityEngine;
 using Utilities;
 
-namespace Game {
+namespace Game.GamePlay {
 
     public class GameManager : MonoBehaviour
     {

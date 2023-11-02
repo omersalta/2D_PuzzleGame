@@ -1,7 +1,7 @@
 using SO_Scripts.Managers;
 using UnityEngine;
 
-namespace Game {
+namespace Game.GamePlay {
 
     public class Picker : MonoBehaviour {
     

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Utilities.RecycleGameObject;
 
-namespace Game {
+namespace Game.GamePlay {
 
     public class Drop : MonoBehaviour,IRecyle 
     {
@@ -36,6 +36,7 @@ namespace Game {
         private void SetSpriteRenderer() {
             myRenderer = GetComponent<SpriteRenderer>();
             myRenderer.sprite = MasterManager.dropSprites[(int) color];
+            FindObjectOfType<BoardOriantionPoint>().AddBoardBoundObject(this.gameObject);
         }
 
         public void Explode() {

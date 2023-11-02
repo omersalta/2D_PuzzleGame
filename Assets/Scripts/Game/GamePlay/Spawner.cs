@@ -4,7 +4,7 @@ using UnityEngine;
 using Utilities;
 using Utilities.RecycleGameObject;
 
-namespace Game {
+namespace Game.GamePlay {
 
     public class Spawner : MonoBehaviour {
 
@@ -61,6 +61,7 @@ namespace Game {
         public void Initialize(int myColumnNo, GameObject dropPrefab, bool activationState) {
             Activate = activationState;
             Initialize(myColumnNo, dropPrefab);
+            FindObjectOfType<BoardOriantionPoint>().AddBoardBoundObject(this.gameObject);
         }
         
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Game;
+using Game.GamePlay;
 using Unity.Mathematics;
 using UnityEngine;
 using Utilities.RecycleGameObject;
@@ -15,7 +16,7 @@ namespace SO_Scripts.Managers {
         [SerializeField] private GameObject _tilePrefab;
         [SerializeField] private GameObject _dropPrefab;
 
-        public GameObject _originPoint { get; private set; }
+        public BoardOriantionPoint _oriantPoint { get; private set; }
         private GameObject _contentTiles;
         private GameObject _contentSpawners;
         
@@ -25,22 +26,24 @@ namespace SO_Scripts.Managers {
         private List<Spawner> _spawners;
         [SerializeField]private List<Tile> _tiles; //indexing  x*ColumnCount + y
         
-        public void Initialize() {
-            _originPoint = GameObject.FindWithTag("BoardOrigin");
+        public void Initialize()
+        {
+            if (!_oriantPoint) _oriantPoint = FindObjectOfType<BoardOriantionPoint>();
             /*if you run into a problem when finding content object you can handle with spesified method
             but not necessery now*/
-            _contentSpawners = _originPoint.transform.GetChild(0).gameObject;
-            _contentTiles = _originPoint.transform.GetChild(1).gameObject;
+            _contentSpawners = _oriantPoint.GetSpawnersParent();
+            _contentTiles = _oriantPoint.GetTilesParent();
             tileAspectLength = findAspectLengths(_tilePrefab);
             ResetBoard();
             ModifyOriginPosition();
         }
         
         void ModifyOriginPosition() {
+            return;
             //its for showing all tiles on center of camera
             //TODO calculate with coding not manuel
             Vector3 offset = new Vector3(columnCount * tileAspectLength.x, rowCount * tileAspectLength.x, 0);
-            _originPoint.transform.position = -offset/2;
+            _oriantPoint.transform.position = -offset/2;
         }
 
         Vector2 findAspectLengths(GameObject tilePrefab) {
@@ -113,7 +116,7 @@ namespace SO_Scripts.Managers {
         
         Vector3 CalculateSpawnerPos(int columnNo) {
             Vector2 t = tileAspectLength;
-            return _originPoint.transform.position + new Vector3(t.x * columnNo, rowCount*t.y, 0);
+            return _oriantPoint.transform.position + new Vector3(t.x * columnNo, rowCount*t.y, 0);
         }
 
         Tile CreateTile(int x, int y, GameObject content) {
