@@ -21,7 +21,6 @@ namespace SO_Scripts.Managers {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void FirstInitilize() {
             boardManager.Initialize();
-            FindObjectOfType<BoardOriantionPoint>().Initialize();
             FindObjectOfType<CameraPositioner>().Position();
         }
         

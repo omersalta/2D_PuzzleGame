@@ -6,18 +6,11 @@ namespace Game
     {
         [SerializeField] private GameObject _contentSpawners;
         [SerializeField] private GameObject _contentTiles;
-        [SerializeField] private GameObject _clickSpawnerText;
     
         private Vector2 boundMin;
         private Vector2 boundMax;
         private Bounds boardBound;
-
-        public void Initialize()
-        {
-            _clickSpawnerText.transform.position = _contentSpawners.transform.position;
-            Destroy(_clickSpawnerText,3f);
-        }
-
+        
         public GameObject GetSpawnersParent()
         {
             return _contentSpawners;
